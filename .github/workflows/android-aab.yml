@@ -33,9 +33,10 @@ jobs:
           echo "$GITHUB_WORKSPACE/gradle-8.6/bin" >> $GITHUB_PATH
 
       # Signing (expects repository secrets to be present)
-      - name: Decode Keystore
+            - name: Decode Keystore
+        shell: bash
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 -d > keystore.jks
           echo "ANDROID_KEYSTORE_PATH=$GITHUB_WORKSPACE/keystore.jks" >> $GITHUB_ENV
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
