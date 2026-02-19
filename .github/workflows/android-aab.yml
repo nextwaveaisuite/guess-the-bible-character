@@ -32,8 +32,8 @@ jobs:
           unzip -q gradle.zip
           echo "$GITHUB_WORKSPACE/gradle-8.6/bin" >> $GITHUB_PATH
 
-      # Signing (expects repository secrets to be present)
-            - name: Decode Keystore
+      # Decode keystore from GitHub Secrets (robust against line breaks/spaces)
+      - name: Decode Keystore
         shell: bash
         run: |
           printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 -d > keystore.jks
@@ -41,6 +41,13 @@ jobs:
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+
+      # Optional sanity check (fails early if keystore/password wrong)
+      - name: Verify keystore is readable
+        shell: bash
+        run: |
+          keytool -list -keystore keystore.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" > /dev/null
+          echo "Keystore OK"
 
       - name: Build Release AAB
         run: |
