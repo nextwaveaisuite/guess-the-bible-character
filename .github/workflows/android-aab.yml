@@ -32,16 +32,11 @@ jobs:
           unzip -q gradle.zip
           echo "$GITHUB_WORKSPACE/gradle-8.6/bin" >> $GITHUB_PATH
 
-      # Optional signing: only runs if you added these secrets
-      - name: Decode Keystore (if provided)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+      # Signing (expects repository secrets to be present)
+      - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
           echo "ANDROID_KEYSTORE_PATH=$GITHUB_WORKSPACE/keystore.jks" >> $GITHUB_ENV
-
-      - name: Set signing env (if provided)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
-        run: |
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
