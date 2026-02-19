@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    // IMPORTANT: keep these matching your app
     namespace "com.nextwaveaisuite.bibleimagequiz"
     compileSdk 34
 
@@ -21,9 +22,9 @@ android {
             def keyAlias = System.getenv("ANDROID_KEY_ALIAS")
             def keyPass = System.getenv("ANDROID_KEY_PASSWORD")
 
-            // HARD FAIL if any signing values are missing (prevents unsigned AAB)
+            // HARD FAIL if missing (prevents unsigned AAB)
             if (ksPath == null || ksPass == null || keyAlias == null || keyPass == null) {
-                throw new GradleException("Missing signing env vars. Ensure GitHub Secrets are set and workflow exports ANDROID_* vars.")
+                throw new GradleException("Missing signing env vars. Ensure GitHub secrets are set and workflow exports ANDROID_* vars.")
             }
 
             storeFile file(ksPath)
